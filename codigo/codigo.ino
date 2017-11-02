@@ -9,8 +9,18 @@ Servo servoGarra;
 //variable para girar el servo
 int pos = 0;
 
+//variables de estado de los servos
+int base = 0;
+int garra = 0;
+int alturaGarra = 0;
+int posicionGarra = 0;
+
 //Variable para llamar al servo que se va a girar(Bluetooth)
 int ins = 3;
+
+///request of serial
+
+char req = "";
 
 void setup()
 {
@@ -25,46 +35,54 @@ void setup()
   servoIzq.write(0);
   servoDer.write(0);
   servoGarra.write(0);
+
+  while (!Serial) {
+    // wait for serial port to connect. Needed for native USB port only
+  }
+
 }
 
 void loop()
 {
-//Switch para seleccionar el servo que va a funcionar
-  switch(ins){
-    case 0:
-      girarBase(50);
-      Serial.print("Girando Base \n");
-      //delay(1000);
-      //regresar();
-      break;
-    case 1:
-      girarIzq(50);
-      Serial.print("Girando Izquierdo \n");
-      //delay(1000);
-      //regresar();
-      break;
-    case 2:
-      girarDer(50);
-      Serial.print("Girando Derecho \n");
-      //delay(1000);
-      //regresar();
-      break;
-    case 3:
-      girarGarra(50);
-      Serial.print("Girando Garra \n");
-      //delay(1000);
-      //regresar();
-      break;
-    case 4:
-      regresar();
-      break;
-    default:
-      Serial.print("Error \n");
-  }
-  Serial.print("Esperando... \n");
-  delay(1000);
-}
+  while (Serial.available() > 0) {
+    req = Serial.read();
+    
+    if (req = "C") {
+      switch(){
+        case "U":
+        break;
 
+        case "D";
+        break;
+
+        case "L":
+        break;
+
+        case "R":
+        break;
+
+        default:
+        
+        break;
+      }
+    }
+    
+    if (req = "B") {
+      int gi = req.toInt();
+      girarBase(int gi);
+    }
+
+    if (req = "P") {
+      int gi = req.toInt();
+      girarGarra(int gi);
+    }
+  }
+
+  if(Serial.available() < 0){
+    regresar()
+  }
+}
+/************************************************************************************/
 //Funcion para girar la base de la garra
 void girarBase(int pos){
   servoBase.write(pos);
