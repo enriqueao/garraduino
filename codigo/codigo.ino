@@ -1,4 +1,11 @@
 #include<Servo.h>
+#include <Psx.h>                                      
+
+//Definiciones de los pins del control PSX
+#define dataPin 8
+#define cmndPin 9
+#define attPin 13
+#define clockPin 10
 
 //Definiendo cada servo dependiendo su funcion
 Servo servoBase;
@@ -10,103 +17,122 @@ Servo servoGarra;
 int pos = 0;
 
 //variables de estado de los servos
-int base = 0;
-int garra = 0;
-int alturaGarra = 0;
-int posicionGarra = 0;
+int base = 90;
+int izq = 0;
+int der = 0;
+int posicionGarra = 25;
 
-//Variable para llamar al servo que se va a girar(Bluetooth)
-int ins = 3;
+int maxPos = 180;
+int maxgarra = 61;
 
-///request of serial
+int minPos = 0;
 
-char req = "";
+
+Psx Psx;                                                 
+
+unsigned int data = 0;                                 
 
 void setup()
 {
-  servoBase.attach(0);
-  servoIzq.attach(1);
-  servoDer.attach(2);
-  servoGarra.attach(3);
+  Psx.setupPins(dataPin, cmndPin, attPin, clockPin, 10);
+  
+  servoBase.attach(5);
+  servoIzq.attach(6);
+  servoDer.attach(3);
+  servoGarra.attach(11);
   
   Serial.begin(9600);
   
-  servoBase.write(90);
-  servoIzq.write(0);
-  servoDer.write(0);
-  servoGarra.write(0);
-
-  while (!Serial) {
-    // wait for serial port to connect. Needed for native USB port only
-  }
-
+  servoBase.write(base);
+  servoIzq.write(izq);
+  servoDer.write(der);
+  servoGarra.write(posicionGarra);
 }
 
 void loop()
 {
-  while (Serial.available() > 0) {
-    req = Serial.read();
-    
-    if (req = "C") {
-      switch(){
-        case "U":
-        break;
+  data = Psx.read();                                      
 
-        case "D";
-        break;
-
-        case "L":
-        break;
-
-        case "R":
-        break;
-
-        default:
-        
-        break;
-      }
+  if (data & psxR1){
+    Serial.println("R1");
+    posicionGarra--;
+    if(posicionGarra < 1){
+      posicionGarra = 1;
     }
-    
-    if (req = "B") {
-      int gi = req.toInt();
-      girarBase(int gi);
-    }
-
-    if (req = "P") {
-      int gi = req.toInt();
-      girarGarra(int gi);
-    }
+    Serial.println(posicionGarra);
+    servoGarra.write(posicionGarra);
+    delay(20);
+                                             
   }
-
-  if(Serial.available() < 0){
-    regresar()
+  if (data & psxR2){
+    Serial.println("R2");
+    base--;
+    if(base < 1){
+      base = 1;
+    }
+    Serial.println(base);
+    servoBase.write(base);
+    delay(20);                           
   }
-}
-/************************************************************************************/
-//Funcion para girar la base de la garra
-void girarBase(int pos){
-  servoBase.write(pos);
-}
-
-//Funcion para girar el servo del lado izquierdo
-void girarIzq(int pos){
-  servoIzq.write(pos);
-}
-
-//Funcion para girar el servo de la derecha
-void girarDer(int pos){
-  servoDer.write(pos);
-}
-
-//Funcion para girar el servo que controla la garra
-void girarGarra(int pos){
-  servoGarra.write(pos);
-}
-
-//Funcion para regresar todos los servos a la posicion 0
-void regresar(){
-  servoBase.write(90);
-  servoIzq.write(0);
-  servoDer.write(0);
-  servoGarra.write(0);
+  if (data & psxL1){
+    Serial.println("L1");
+    posicionGarra++;
+    if(posicionGarra > 64){
+      posicionGarra = 63;
+    }
+    Serial.println(posicionGarra);
+    servoGarra.write(posicionGarra);
+    delay(20);
+  }
+  if (data & psxL2){
+    Serial.println("L2");
+    base++;
+    if(base > 180){
+      base = 180;
+    }
+    Serial.println(base);
+    servoBase.write(base);
+    delay(20);                           
+  }
+  if (data & psxX){
+    Serial.println("Left");
+    der--;
+    if(der < 1){
+      der = 1;
+    }
+    Serial.println(der);
+    servoDer.write(der);
+    delay(20);                           
+  }
+  if (data & psxTri){
+    Serial.println("Tri");
+    der++;
+    if(der > 90){
+      der = 90;
+    }
+    Serial.println(der);
+    servoDer.write(der);
+    delay(20);                             
+  }
+  if (data & psxUp){
+    Serial.println("UP");
+    izq++;
+     if(izq > 180){
+      izq = 180;
+    }
+    Serial.println(izq);
+    servoIzq.write(izq);
+    delay(20);                        
+  }
+  if (data & psxDown){
+    Serial.println("Down");
+    izq--;
+    if(izq < 1){
+      izq = 1;
+    }
+    Serial.println(izq);
+    servoIzq.write(izq);
+    delay(20);                             
+  }
+  delay(20);
 }
