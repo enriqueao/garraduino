@@ -22,11 +22,9 @@ int izq = 0;
 int der = 0;
 int posicionGarra = 25;
 
-int maxPos = 180;
-int maxgarra = 61;
-
-int minPos = 0;
-
+//Variables de los Led's
+int ledIzq = 1;
+int ledDer = 12;
 
 Psx Psx;                                                 
 
@@ -47,10 +45,17 @@ void setup()
   servoIzq.write(izq);
   servoDer.write(der);
   servoGarra.write(posicionGarra);
+
+  pinMode(ledIzq, OUTPUT);
+  pinMode(ledDer, OUTPUT);
 }
 
 void loop()
 {
+  //Resetear Led's
+  digitalWrite(ledIzq, LOW);
+  digitalWrite(ledDer, LOW);
+  
   data = Psx.read();                                      
 
   if (data & psxR1){
@@ -69,6 +74,7 @@ void loop()
     base--;
     if(base < 1){
       base = 1;
+      digitalWrite(ledIzq, HIGH);
     }
     Serial.println(base);
     servoBase.write(base);
@@ -89,6 +95,7 @@ void loop()
     base++;
     if(base > 180){
       base = 180;
+      digitalWrite(ledDer, HIGH);
     }
     Serial.println(base);
     servoBase.write(base);
