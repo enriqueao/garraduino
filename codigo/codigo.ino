@@ -18,7 +18,7 @@ int pos = 0;
 
 //variables de estado de los servos
 int base = 90;
-int izq = 0;
+int izq = 74;
 int der = 0;
 int posicionGarra = 25;
 
@@ -209,8 +209,8 @@ void loop()
   if (data & psxUp){
     Serial.println("UP");
     izq++;
-     if(izq > 180){
-      izq = 180;
+     if(izq > 74){
+      izq = 74;
     }
     if(base > 130 and base <160){
       digitalWrite(zum, HIGH);
