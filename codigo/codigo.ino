@@ -160,7 +160,7 @@ void loop()
 
 
   
-  if (data & psxX){
+  if (data & psxO){
     Serial.println("Left");
     der--;
     if(der < 1){
@@ -183,7 +183,7 @@ void loop()
 
 
   
-  if (data & psxTri){
+  if (data & psxSqu){
     Serial.println("Tri");
     der++;
     if(der > 90){
